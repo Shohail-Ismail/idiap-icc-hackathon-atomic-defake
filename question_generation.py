@@ -1,9 +1,10 @@
-import os
 import json
+import os
 import uuid
+from pathlib import Path
+
 from dotenv import load_dotenv
 from mistralai import Mistral
-from pathlib import Path
 
 QUESTION_DIR="questions"
 
@@ -48,6 +49,7 @@ def store_post_and_questions(run_id, post_text, questions, prompt_data):
             "questions": questions,
             "prompt_data": prompt_data
         }, f)
+
 
 if __name__ == "__main__":
     api_key = os.environ["MISTRAL_API_KEY"]

@@ -27,6 +27,7 @@ def manual_input_human_responses(post, questions):
         print()
     return qa_pairs
 
+
 def store_qa_pairs(run_id, qa_pairs, data):
     filename = Path(RESPONSE_DIR) / f"{run_id}.json"
     data['qa_pairs'] = qa_pairs
@@ -42,10 +43,6 @@ def main():
     run_id, post, questions, data = read_question_file(Path(args.file))
     qa_pairs = manual_input_human_responses(post, questions)
     store_qa_pairs(run_id, qa_pairs, data)
-
-
-
-
 
 
 if __name__ == "__main__":
