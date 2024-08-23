@@ -41,7 +41,7 @@ def evaluate_for_misinformation(answer, client):
         messages = [
             {
                 "role": "user",
-                "content": f"Given the following answer, evaluate it for misinformation. Specifically, assess the accuracy of the claims made, identify any logical inconsistencies, and evaluate the reliability of the sources or evidence provided: {answer}. Return the evaluation in a JSON format.",
+                "content": f"Given the following answer, evaluate it for misinformation. Specifically, assess the answer itself for sanity and consistency, give a misinformation certainty, and give the reason for that misinformation certaintly level, and use only heading of 'misinformation' (with possible labels of 'None', 'Little', 'Some', 'Most' and 'All'), 'certainty, 'reason' for all the answers, using no other headings pr subheadings: {answer}. Return the evaluation in a JSON format.",
             },
         ],
         response_format = {

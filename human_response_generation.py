@@ -36,7 +36,7 @@ def manual_input_human_responses(post, questions):
         print(f"Question: {q}")
         response = ask_response()
 
-        certainty = "idk bro"
+        certainty = "l"
         if response != '?':
             certainty = ask_certainty()
 
