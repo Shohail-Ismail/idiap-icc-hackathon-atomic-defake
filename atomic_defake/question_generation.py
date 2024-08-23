@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import uuid
@@ -56,9 +57,11 @@ if __name__ == "__main__":
     model = "open-mistral-nemo"
     client = Mistral(api_key=api_key)
 
-    post_text = "Our popular coffee shop, Brew Haven, is now offering free Wi-Fi and extended hours until 10 PM daily! :coffee::computer:"
+    parser = argparse.ArgumentParser(description="A basic argparse example.")
+    parser.add_argument('post_text', type=str, help='The post to verify', default=None)
+    args = parser.parse_args()
 
-    run_id, questions, prompt_data = question_generation(post_text, client)
+    run_id, questions, prompt_data = question_generation(args.post_text, client)
 
     if len(questions) < 5:
         print("Error: Less than 5 questions generated.")
@@ -68,6 +71,6 @@ if __name__ == "__main__":
     for question in questions:
         print(question)
 
-    store_post_and_questions(run_id, post_text, questions, prompt_data)
+    store_post_and_questions(run_id, args.post_text, questions, prompt_data)
 
 
