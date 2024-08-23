@@ -14,16 +14,31 @@ def read_question_file(file_path):
     return run_id, post, questions, data
 
 
+def ask_certainty():
+    certainty = input("How certain are you about it? [h/m/l]: ")
+    while certainty not in ['h', 'm', 'l']:
+        print("Invalid response. Please enter 'h', 'm', or 'l'")
+        certainty = input("How certain are you about it? [h/m/l]: ")
+    return certainty
+
+def ask_response():
+    response = input("Response [y/n/?]: ")
+    while response not in ['y', 'n', '?']:
+        print("Invalid response. Please enter 'y', 'n', or '?'")
+        response = input("Response [y/n/?]: ")
+    return response
+
 def manual_input_human_responses(post, questions):
     qa_pairs = []
     for q in questions:
         print(f"Post: {post}")
         print(f"Question: {q}")
-        response = input("Response [y/n/?]: ")
-        while response not in ['y', 'n', '?']:
-            print("Invalid response. Please enter 'y', 'n', or '?'")
-            response = input("Response [y/n/?]: ")
-        qa_pairs.append({"question": q, "response": response})
+        response = ask_response()
+
+        if response != '?':
+            certainty = ask_certainty()
+
+        qa_pairs.append({"question": q, "response": response, 'certainty': certainty})
         print()
     return qa_pairs
 
