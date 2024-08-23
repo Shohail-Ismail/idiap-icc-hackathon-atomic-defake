@@ -38,7 +38,7 @@ def manual_input_human_responses(post, questions):
         if response != '?':
             certainty = ask_certainty()
 
-        qa_pairs.append({"question": q, "response": response, 'certainty': certainty})
+        qa_pairs.append({"question": q, "response_human": {"response": response, "certainty": certainty}})
         print()
     return qa_pairs
 
