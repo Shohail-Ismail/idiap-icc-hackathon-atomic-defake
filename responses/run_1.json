@@ -1,0 +1,13 @@
+{
+    "run_id": "run_1",
+    "prompt_data": {
+        "post_text": "Our popular coffee shop, Brew Haven, is now offering free Wi-Fi and extended hours until 10 PM daily! :coffee::computer:"
+    },
+    "questions": [
+        "Is there any catch or hidden costs associated with the free Wi-Fi offer?",
+        "Are the extended hours until 10 PM applicable on weekends as well, or only on weekdays?",
+        "Has the coffee shop increased its seating capacity to accommodate more customers during the extended hours?",
+        "Are there any specific areas within the coffee shop where the Wi-Fi signal might be weak or unavailable?",
+        "Are there any restrictions on the usage of the free Wi-Fi, such as data limits or time restrictions?"
+    ]
+}

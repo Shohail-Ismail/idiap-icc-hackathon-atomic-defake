@@ -1,5 +1,6 @@
 import os
 import json
+from pathlib import Path
 import time
 from dotenv import load_dotenv
 from mistralai import Mistral
@@ -73,10 +74,24 @@ def process_questions(question_obj, client):
     return evaluations  
 
 # Not necessary for func.
-def pretty_print_output(question_obj, evaluations):
+def pretty_print(question_obj, evaluations):
     print(json.dumps({"questions": question_obj['questions']}, indent=4))
     for evaluation in evaluations:
         print(json.dumps(evaluation, indent=4))
+
+
+def save_questions_to_file(question_obj, post_text, run_id="default_run_id"):
+    responses_dir = Path("responses")
+    responses_dir.mkdir(exist_ok=True)
+    
+    data = {
+        "run_id": run_id,
+        "prompt_data": {"post_text": post_text},
+        "questions": question_obj['questions']
+    }
+    with open(f"responses/{run_id}.json", "w") as f:
+        json.dump(data, f, indent=4)
+
 
 if __name__ == "__main__":
     api_key = os.environ["MISTRAL_API_KEY"]
@@ -84,6 +99,7 @@ if __name__ == "__main__":
     client = Mistral(api_key=api_key)
 
     post_text = "Our popular coffee shop, Brew Haven, is now offering free Wi-Fi and extended hours until 10 PM daily! :coffee::computer:"
+    run_id = "run_1"  # example id
 
     response = question_generation(post_text, client)
 
@@ -97,5 +113,6 @@ if __name__ == "__main__":
         print("Error: Less than 5 questions generated.")
         exit(1)
 
+    save_questions_to_file(question_obj, post_text, run_id)
     evaluations = process_questions(question_obj, client)
-    pretty_print_output(question_obj, evaluations)
+    pretty_print(question_obj, evaluations)
