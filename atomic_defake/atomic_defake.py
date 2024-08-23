@@ -1,6 +1,8 @@
 import json
 import os
 import uuid
+import time
+import random
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -14,6 +16,9 @@ from atomic_defake.question_generation import question_generation
 load_dotenv()
 
 
+STATUSES = ["wait", "completed", "start"]
+
+
 class AtomicDeFake:
     def __init__(self, aggregation_method):
         self.aggregation_method = aggregation_method
@@ -24,6 +29,27 @@ class AtomicDeFake:
         api_key = os.environ["MISTRAL_API_KEY"]
         self.model = "open-mistral-nemo"
         self.client = Mistral(api_key=api_key)
+        self.status = "start"
+        self.verified = False
+        self.post_text = None
+
+    def get_status(self):
+        return self.status
+
+    def get_output(self):
+        if self.post_text is None:
+            print(self.verified)
+            return "No post to verify"
+        else:
+            if self.verified:
+                return self.post_text + " (Verified by ADF)"
+            else:
+                return self.post_text + " (Not Verified by ADF)"
+
+    def set_status(self, status):
+        """ """
+        assert status in STATUSES
+        self.status = status
 
     def generate_run_id(self):
         return str(uuid.uuid4().hex)
@@ -69,13 +95,32 @@ class AtomicDeFake:
         return verify_post(run_id, qa_pairs, method=self.aggregation_method)
 
     def verify(self, post_text):
+        self.set_status("wait")
+        self.post_text = post_text
+        print(self.post_text)
+
         run_id = self.generate_run_id()
 
         questions = self.generate_atomic_questions(post_text)
+        time.sleep(1)
 
         responses = self.generate_responses(post_text, questions)
 
         final_label = self.aggregate_responses(run_id, responses)
 
         self.store_run(run_id, post_text, responses, final_label)
-        return final_label
+
+        self.set_status("completed")
+        self.verified = final_label
+
+    def verify_fake(self, post_text, threshold=0.5):
+        self.set_status("wait")
+        self.post_text = post_text
+        likelihood = random.random()
+        if likelihood > threshold:
+            self.verified = True
+        else:
+            self.verified = False
+        time.sleep(2)
+
+        self.set_status("completed")
