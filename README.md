@@ -1,8 +1,20 @@
 # atomic-defake
 
+## Requirements
+* Anaconda
+* Python 3.11
+
 ## Installation
-1. Install requirements in `requirements.txt` (`pip install -r requirements.txt`).
-2. Create a `.env` file in the project root and put in your Mistral API key as follows:
+```
+conda create -n atomic-defake python=3.11
+
+conda activate atomic-defake
+
+pip install -r requirements.txt
+```
+
+## Setup
+Create a `.env` file in the project root and put in your Mistral API key as follows:
 ```
 MISTRAL_API_KEY=<YOUR_KEY>
 ```
