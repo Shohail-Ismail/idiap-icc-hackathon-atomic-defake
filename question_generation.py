@@ -14,7 +14,7 @@ load_dotenv()
 
 def question_generation(post_text, client):
     run_id = str(uuid.uuid4().hex)
-    prompt = f"Generate questions to verify whether the following post is NOT misleading: {post_text}. Return the questions in a short JSON object. Please include at least 5 questions."
+    prompt = f"Generate questions to verify whether the following post is NOT misleading. Make sure the questions are in the third person: {post_text}. Return the questions in a short JSON object. Include at least 5 questions."
     chat_response = client.chat.complete(
         model = model,
         messages = [
