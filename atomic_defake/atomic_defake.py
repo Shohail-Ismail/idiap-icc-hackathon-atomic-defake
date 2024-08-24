@@ -27,8 +27,10 @@ class AtomicDeFake:
                 f"Invalid verification method: '{self.aggregation_method}', must be one of {VERTIFICATION_STRATEGIES}."
             )
         api_key = os.environ["MISTRAL_API_KEY"]
+        
         self.model = "open-mistral-nemo"
         self.client = Mistral(api_key=api_key)
+        
         self.status = "start"
         self.verified = False
         self.post_text = None
