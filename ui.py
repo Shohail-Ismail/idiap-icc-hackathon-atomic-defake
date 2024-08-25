@@ -70,7 +70,11 @@ if __name__ == "__main__":
                 "AtomicDeFake": [user_post_page, contributor_page],
             }
         )
-        st.set_page_config(page_title="Data manager", page_icon=":material/edit:")
+        st.set_page_config(page_title="Atomic-DeFake", page_icon=":identification_card:")
+
+        # if st.session_state.stage == "contributor":
+        #     st.switch_page("contributor.py")
+
     else:
         pg = st.navigation([login_page])
 

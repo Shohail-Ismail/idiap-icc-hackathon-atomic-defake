@@ -16,7 +16,7 @@ from atomic_defake.question_generation import question_generation
 load_dotenv()
 
 
-STATUSES = ["wait", "completed", "start"]
+STATUSES = ["wait", "human_responses", "completed", "start"]
 
 
 class AtomicDeFake:
@@ -98,13 +98,14 @@ class AtomicDeFake:
 
     def verify(self, post_text):
         self.set_status("wait")
+        
         self.post_text = post_text
         print(self.post_text)
 
         run_id = self.generate_run_id()
 
         questions = self.generate_atomic_questions(post_text)
-        time.sleep(1)
+        time.sleep(3)
 
         responses = self.generate_responses(post_text, questions)
 
@@ -115,9 +116,14 @@ class AtomicDeFake:
         self.set_status("completed")
         self.verified = final_label
 
+    #########################################################################
+    # Fake part for development. This should be replicated with the real version    
     def verify_fake(self, post_text, threshold=0.5):
         self.set_status("wait")
         self.post_text = post_text
+
+
+
         likelihood = random.random()
         if likelihood > threshold:
             self.verified = True
@@ -126,3 +132,44 @@ class AtomicDeFake:
         time.sleep(2)
 
         self.set_status("completed")
+
+    def get_ai_questions_fake(self):
+        """
+        """
+        adf_questions = {
+            "qa_pair" : [
+            {
+                "question": "Is this OK? 1",
+            },
+            {
+                "question": "Is this OK? 2",
+            },
+            {
+                "question": "Is this OK? 3",
+            },
+            {
+                "question": "Is this OK? 4",
+            },
+            {
+                "question": "Is this OK? 5",
+            },
+            ]
+        }
+
+        return adf_questions
+
+    def verify_ai_fake(self, post_text, threshold=0.5):
+        self.set_status("wait")
+        self.post_text = post_text
+
+        time.sleep(2)
+
+        self.set_status("human_responses")    
+
+    def verify_human_fake(self, post_text, threshold=0.5):
+        self.set_status("wait")
+        self.post_text = post_text
+
+        time.sleep(2)
+
+        self.set_status("human_responses")

@@ -1,31 +1,6 @@
 import streamlit as st
 
 
-# adf_questions= atomic_defake.get_questions()
-st.session_state.stage="contributor"
-
-
-adf_questions = {
-    "qa_pair" : [
-    {
-        "question": "Is this OK? 1",
-    },
-    {
-        "question": "Is this OK? 2",
-    },
-    {
-        "question": "Is this OK? 3",
-    },
-    {
-        "question": "Is this OK? 4",
-    },
-    {
-        "question": "Is this OK? 5",
-    },
-    ]
-}
-
-
 contributor_qas = {
     "qa_pair" : [
     {
@@ -65,6 +40,9 @@ def send_answers_to_adf():
     my_qas["overall_label"] = st.session_state.radio_trust
     my_qas["overall_certainty"] = st.session_state.contributor_conf
 
+    st.session_state.atomic_defake.get_ai_questions_fake()
+
+
 
     st.session_state["contributor_qas"] = my_qas
     st.session_state.stage = ""
@@ -73,6 +51,9 @@ def send_answers_to_adf():
 def questions_form():
     """
     """
+    # adf_questions = st.session_state.atomic_defake.get_ai_questions()
+    adf_questions = st.session_state.atomic_defake.get_ai_questions_fake()
+
     st.divider()
 
     with st.form(key="questions_form"):
@@ -117,7 +98,7 @@ def questions_form():
 
         submit_button = st.form_submit_button(
             label="Submit",
-            # on_click=send_answers_to_adf,
+            on_click=send_answers_to_adf,
         )
 
 
@@ -144,6 +125,7 @@ else:
     
     if "post" in st.session_state:
         st.text(st.session_state.post)
+
 
     questions_form()
 

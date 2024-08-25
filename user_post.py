@@ -99,13 +99,19 @@ def run_atomic_defake():
     )
 
     
-    st.session_state.atomic_defake.verify_fake(user_post)
+    st.session_state.atomic_defake.verify_ai_fake(user_post)
     # atomic_defake.verify(user_post)
 
-    if st.session_state.atomic_defake.get_status() == "completed":
-        st.session_state.stage = "output"
+    if st.session_state.atomic_defake.get_status() == "human_responses":
+        st.session_state.stage="contributor"
+        st.session_state.post=user_post
+        # if st.session_state.stage == "contributor":
+        st.switch_page("contributor.py")    
 
-        st.session_state.adf_response = st.session_state.atomic_defake.get_output()
+    # if st.session_state.atomic_defake.get_status() == "completed":
+    #     st.session_state.stage = "output"
+
+    #     st.session_state.adf_response = st.session_state.atomic_defake.get_output()
 
 
 def set_output_stage():
