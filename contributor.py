@@ -1,4 +1,8 @@
 import streamlit as st
+import uuid
+import time
+
+uuid=uuid.uuid1()
 
 
 contributor_qas = {
@@ -40,12 +44,13 @@ def send_answers_to_adf():
     my_qas["overall_label"] = st.session_state.radio_trust
     my_qas["overall_certainty"] = st.session_state.contributor_conf
 
-    st.session_state.atomic_defake.get_ai_questions_fake()
-
-
-
+    ### Send the info to the backend
     st.session_state["contributor_qas"] = my_qas
-    st.session_state.stage = ""
+    st.session_state.stage = "adf_aggregation"
+
+    atomic_defake = st.session_state.atomic_defake
+    atomic_defake.set_human_responses(uuid, my_qas)
+    st.session_state.atomic_defake = atomic_defake
 
 
 def questions_form():
@@ -101,23 +106,13 @@ def questions_form():
             on_click=send_answers_to_adf,
         )
 
-
-
-            
-
-
 ############################################################################
+
 st.title("Atomic-DeFake")
 st.header("Contributor")
 st.divider()
 
-if st.session_state.stage != "contributor":
-    st.text("""
-        There is no post for you to review. 
-        You will be notified when the post of another user is ready to be reviewed.
-        """
-        )
-else:
+if st.session_state.stage == "contributor":
     st.text("""
         Please answer to the list of questions below 
         to identify if any misleading information is present in the following post.
@@ -126,8 +121,28 @@ else:
     if "post" in st.session_state:
         st.text(st.session_state.post)
 
-
     questions_form()
+
+elif st.session_state.stage == "adf_aggregation":
+    time.sleep(3)
+    
+    st.session_state.atomic_defake.detect_mislead_info_fake()
+
+    if st.session_state.atomic_defake.get_status() == "completed":
+     
+        st.session_state.stage="output"
+     
+        st.switch_page("user_post.py") 
+
+else:
+    st.text("""
+        There is no post for you to review. 
+        You will be notified when the post of another user is ready to be reviewed.
+        """
+        )
+    
+
+
 
 
     

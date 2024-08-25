@@ -16,7 +16,7 @@ from atomic_defake.question_generation import question_generation
 load_dotenv()
 
 
-STATUSES = ["wait", "human_responses", "completed", "start"]
+STATUSES = ["wait", "human_responses", "completed", "start", "aggregation"]
 
 
 class AtomicDeFake:
@@ -30,23 +30,37 @@ class AtomicDeFake:
         
         # self.model = "open-mistral-nemo"
         # self.client = Mistral(api_key=api_key)
-        
+        self.reset()
+
+    def reset(self):
+        """
+        """
         self.status = "start"
         self.verified = False
         self.post_text = None
+
+        self.qa_pairs_h = {}
 
     def get_status(self):
         return self.status
 
     def get_output(self):
+        """
+        """
+        print(self.post_text)
+
         if self.post_text is None:
-            print(self.verified)
-            return "No post to verify"
+            ret=-1
+            user_response = "No post to verify" 
         else:
             if self.verified:
-                return self.post_text + " (Verified by ADF)"
+                ret=1
+                user_response = self.post_text + " (Verified by ADF)"
             else:
-                return self.post_text + " (Not Verified by ADF)"
+                ret=0
+                user_response=self.qa_pairs_h
+        
+        return self.verified, user_response
 
     def set_status(self, status):
         """ """
@@ -118,20 +132,20 @@ class AtomicDeFake:
 
     #########################################################################
     # Fake part for development. This should be replicated with the real version    
-    def verify_fake(self, post_text, threshold=0.5):
-        self.set_status("wait")
-        self.post_text = post_text
+    # def verify_fake(self, post_text, threshold=0.5):
+    #     self.set_status("wait")
+    #     self.post_text = post_text
 
 
 
-        likelihood = random.random()
-        if likelihood > threshold:
-            self.verified = True
-        else:
-            self.verified = False
-        time.sleep(2)
+    #     likelihood = random.random()
+    #     if likelihood > threshold:
+    #         self.verified = True
+    #     else:
+    #         self.verified = False
+    #     time.sleep(2)
 
-        self.set_status("completed")
+    #     self.set_status("completed")
 
     def get_ai_questions_fake(self):
         """
@@ -162,14 +176,40 @@ class AtomicDeFake:
         self.set_status("wait")
         self.post_text = post_text
 
-        time.sleep(2)
-
-        self.set_status("human_responses")    
-
-    def verify_human_fake(self, post_text, threshold=0.5):
-        self.set_status("wait")
-        self.post_text = post_text
+        print("AI Fake")
+        print(self.post_text)
 
         time.sleep(2)
 
         self.set_status("human_responses")
+
+    def set_human_responses(self, uuid, user_qas):
+        """
+        """
+        if uuid not in self.qa_pairs_h:
+            self.qa_pairs_h[uuid] = user_qas
+
+
+    def detect_mislead_info_fake(self):
+        """
+        """
+        # final_label = self.aggregate_responses(run_id, responses)
+
+        ### Aggregate results from the human and the AI
+        self.set_status("aggregation")
+        
+        threshold=0.5
+
+        likelihood = random.random()
+        
+        print(threshold)
+        print(likelihood)
+        
+        if likelihood > threshold:
+            self.verified = True
+        else:
+            self.verified = False
+
+        time.sleep(3)
+
+        self.set_status("completed")

@@ -4,10 +4,10 @@ from atomic_defake.atomic_defake import AtomicDeFake
 
 
 def initialise_session():
-    """ """
-    if "stage" not in st.session_state:
-        st.session_state.stage = None
-
+    """ 
+    """
+    st.session_state.stage = None
+    
     if "social_media" not in st.session_state:
         st.session_state.social_media = None
 
@@ -40,7 +40,9 @@ def logout():
 
 if __name__ == "__main__":
 
-    initialise_session()
+    if "stage" not in st.session_state:
+        
+        initialise_session()
 
     login_page = st.Page(login, title="Log in", icon=":material/login:")
     logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
@@ -71,9 +73,6 @@ if __name__ == "__main__":
             }
         )
         st.set_page_config(page_title="Atomic-DeFake", page_icon=":identification_card:")
-
-        # if st.session_state.stage == "contributor":
-        #     st.switch_page("contributor.py")
 
     else:
         pg = st.navigation([login_page])

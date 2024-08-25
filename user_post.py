@@ -117,8 +117,39 @@ def run_atomic_defake():
 def set_output_stage():
 
     st.divider()
-    st.text("Here is your certified output")
-    st.text(st.session_state.adf_response)
+
+    ret, user_response = st.session_state.atomic_defake.get_output()
+
+    if ret == 1:
+        st.text("Here is your certified output")
+        st.text(user_response)
+
+    elif ret == 0:
+        st.text("Your post has not been verified because of the following reasons.\n")
+
+        ### TO IMPROVE
+        feedback_report = ""
+
+        for key, user in user_response.items():
+            for idx in range(0,5):
+                feedback_report += "Question {:d}: ".format(idx+1)
+                feedback_report += user['qa_pair'][idx]["question"]
+                feedback_report += "\nResponse: "
+                feedback_report += user['qa_pair'][idx]["response_human"]
+                feedback_report += "\n"
+
+            feedback_report += "Overal assessment: "
+            feedback_report += user['overall_label']
+            feedback_report += "\nConfidence: "
+            feedback_report += user['overall_certainty']
+            feedback_report += "\n"
+
+        st.text(feedback_report)
+
+    elif ret == -1:
+        st.text(user_response)
+    
+    # st.text(st.session_state.adf_response)
 
 
 # initialise_session()
@@ -133,7 +164,8 @@ if st.session_state.stage == "atomic_defake":
     # preamble()
     run_atomic_defake()
     
-
 if st.session_state.stage == "output":
     set_output_stage()
+    
     st.session_state.stage = None
+    st.session_state.atomic_defake.reset()
