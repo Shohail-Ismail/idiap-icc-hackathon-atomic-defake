@@ -1,33 +1,11 @@
 import streamlit as st
 
-from atomic_defake.atomic_defake import AtomicDeFake
-
-
 # STATUSES = ["wait", "completed", "start"]
 
 
 def set_atomic_defake():
     """API fo Atomic DeFake"""
     st.session_state.stage = "atomic_defake"
-
-
-def initialise_session():
-    """ """
-    if "stage" not in st.session_state:
-        st.session_state.stage = None
-
-    if "social_media" not in st.session_state:
-        st.session_state.social_media = None
-
-
-def reset_session():
-    """
-    """
-    if "stage" not in st.session_state:
-        st.session_state.stage = None
-
-    if "social_media" not in st.session_state:
-        st.session_state.social_media = None
 
 def preamble():
     st.title("Atomic-DeFake")
@@ -120,14 +98,14 @@ def run_atomic_defake():
         )
     )
 
-    atomic_defake = AtomicDeFake(aggregation_method="single_false_or_unsure")
-    atomic_defake.verify_fake(user_post)
+    
+    st.session_state.atomic_defake.verify_fake(user_post)
     # atomic_defake.verify(user_post)
 
-    if atomic_defake.get_status() == "completed":
+    if st.session_state.atomic_defake.get_status() == "completed":
         st.session_state.stage = "output"
 
-        st.session_state.adf_response = atomic_defake.get_output()
+        st.session_state.adf_response = st.session_state.atomic_defake.get_output()
 
 
 def set_output_stage():
@@ -137,10 +115,7 @@ def set_output_stage():
     st.text(st.session_state.adf_response)
 
 
-
-
-
-initialise_session()
+# initialise_session()
 # if not st.session_state.stage:
 preamble()
 

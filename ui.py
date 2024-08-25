@@ -1,5 +1,28 @@
 import streamlit as st
 
+from atomic_defake.atomic_defake import AtomicDeFake
+
+
+def initialise_session():
+    """ """
+    if "stage" not in st.session_state:
+        st.session_state.stage = None
+
+    if "social_media" not in st.session_state:
+        st.session_state.social_media = None
+
+    st.session_state.atomic_defake = AtomicDeFake(aggregation_method="single_false_or_unsure")
+
+
+def reset_session():
+    """
+    """
+    if "stage" not in st.session_state:
+        st.session_state.stage = None
+
+    if "social_media" not in st.session_state:
+        st.session_state.social_media = None
+
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -16,6 +39,8 @@ def logout():
 
 
 if __name__ == "__main__":
+
+    initialise_session()
 
     login_page = st.Page(login, title="Log in", icon=":material/login:")
     logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
