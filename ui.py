@@ -56,8 +56,26 @@ def logout():
         st.session_state.logged_in = False
         st.rerun()
 
+#############################################################################
+def GetParser(desc=""):
+    """ """
+    parser = argparse.ArgumentParser(
+        description=desc,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    parser.add_argument("--n_checkers", type=int, default=1)
+    
+    return parser
+
 
 if __name__ == "__main__":
+
+    parser = GetParser()
+    args = parser.parse_args()
+
+    st.session_state.n_checkers = args.n_checkers
+
 
     if "stage" not in st.session_state:
         initialise_session()

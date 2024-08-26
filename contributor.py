@@ -18,8 +18,6 @@ import uuid
 
 import streamlit as st
 
-user_id = str(uuid.uuid1())
-
 
 contributor_qas = {
     "qa_pair": [
@@ -64,9 +62,15 @@ def send_answers_to_adf():
     my_qas["overall_certainty"] = copy.copy(st.session_state.contributor_conf)
 
     ### Send the info to the backend
-    st.session_state["contributor_qas"] = my_qas
-    st.session_state.stage = "adf_aggregation"
+    st.session_state["contributor_qas"] = my_qas    
     st.session_state.atomic_defake.set_human_responses(user_id, my_qas.copy())
+
+    st.session_state.n_checkers -= 1
+
+    if st.session_state.n_checkers == 0:
+        st.session_state.stage = "adf_aggregation"
+
+        
 
 
 def questions_form():
@@ -128,8 +132,10 @@ def questions_form():
 
 ############################################################################
 
+user_id = str(uuid.uuid1())
+
 st.title("Atomic-DeFake")
-st.header("Contributor")
+st.header("Contributor {:s}".format(user_id))
 st.divider()
 
 if st.session_state.stage == "contributor":
@@ -147,7 +153,8 @@ if st.session_state.stage == "contributor":
 
 elif st.session_state.stage == "adf_aggregation":
     time.sleep(3)
-    st.session_state.atomic_defake.detect_mislead_info()
+    st.session_state.atomic_defake.detect_mislead_info_fake()
+    # st.session_state.atomic_defake.detect_mislead_info()
 
     if st.session_state.atomic_defake.get_status() == "completed":
         st.session_state.stage = "output"
