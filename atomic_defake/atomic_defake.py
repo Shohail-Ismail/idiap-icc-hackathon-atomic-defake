@@ -1,3 +1,19 @@
+#!/usr/bin/env python
+#
+# Brief description here
+#
+##############################################################################
+# Authors:
+# - Alessio Xompero, alessio.xompero@gmail.com
+# - Michiel van der Meer, m.t.van.der.meer@liacs.leidenuniv.nl
+# - Shohail Ismael, shohailusman@gmail.com
+#
+#  Created Date: 2024/08/23
+# Modified Date: 2023/08/26
+#
+# Copyright (c) 2024 AtomicDeFake
+#
+##############################################################################
 import json
 import os
 import uuid
@@ -28,6 +44,7 @@ class AtomicDeFake:
         api_key = os.environ["MISTRAL_API_KEY"]
         self.model = "open-mistral-nemo"
         self.client = Mistral(api_key=api_key)
+        
         self.reset()
         self.llm_responses = None
         self.generated_questions = None

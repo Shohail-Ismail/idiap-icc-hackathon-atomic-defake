@@ -1,3 +1,18 @@
+#!/usr/bin/env python
+#
+# Brief description here
+#
+##############################################################################
+# Authors:
+# - Alessio Xompero, alessio.xompero@gmail.com
+#
+#  Created Date: 2024/08/23
+# Modified Date: 2023/08/26
+#
+# Copyright (c) 2024 AtomicDeFake
+#
+##############################################################################
+import argparse
 import streamlit as st
 
 from atomic_defake.atomic_defake import AtomicDeFake
