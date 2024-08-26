@@ -67,8 +67,6 @@ def evaluate_for_misinformation(answer, client):
 def generate_llm_responses(post, questions, client):
     qa_pairs = []
     for q in questions:
-        print(f"Post: {post}")
-        print(f"Question: {q}")
         answer_response = generate_answer(q, client)
         evaluation_response = evaluate_for_misinformation(answer_response, client)
         qa_pairs.append(
@@ -81,7 +79,6 @@ def generate_llm_responses(post, questions, client):
                 },
             }
         )
-        print()
         time.sleep(2)
     return qa_pairs
 

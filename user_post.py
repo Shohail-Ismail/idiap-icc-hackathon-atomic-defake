@@ -1,23 +1,19 @@
 import streamlit as st
 
-# STATUSES = ["wait", "completed", "start"]
-
 
 def set_atomic_defake():
     """API fo Atomic DeFake"""
     st.session_state.stage = "atomic_defake"
 
+
 def preamble():
     st.title("Atomic-DeFake")
     social_media_buttons()
 
+
 def social_media_on_click(idx, SOCIAL_MEDIA, SOCIAL_MEDIA_CHARS):
-    """
-    """
-    social_media_item = {
-        "name": "", 
-        "max_chars": 0
-    }
+    """ """
+    social_media_item = {"name": "", "max_chars": 0}
 
     social_media_item["name"] = SOCIAL_MEDIA[idx].lower()
     social_media_item["max_chars"] = SOCIAL_MEDIA_CHARS[idx]
@@ -26,13 +22,12 @@ def social_media_on_click(idx, SOCIAL_MEDIA, SOCIAL_MEDIA_CHARS):
     st.session_state.stage = "post"
 
 
-
 def social_media_buttons():
     """ """
-    
+
     st.divider()
-    st.text("Where do you want to post?") 
-    
+    st.text("Where do you want to post?")
+
     # TODO - move to a file to read maybe? Make sure to read once before running the app
     SOCIAL_MEDIA = ["Facebook", "Twitter", "Linkedin", "Other"]
     SOCIAL_MEDIA_CHARS = [63206, 280, 280, 280]
@@ -86,9 +81,9 @@ def post_message():
             on_click=set_atomic_defake,
         )
 
+
 def run_atomic_defake():
-    """
-    """
+    """ """
     user_post = st.session_state.post
 
     st.divider()
@@ -98,74 +93,36 @@ def run_atomic_defake():
         )
     )
 
-    
     st.session_state.atomic_defake.verify_ai(user_post)
-    # atomic_defake.verify(user_post)
 
     if st.session_state.atomic_defake.get_status() == "human_responses":
-        st.session_state.stage="contributor"
-        st.session_state.post=user_post
-        # if st.session_state.stage == "contributor":
-        st.switch_page("contributor.py")    
-
-    # if st.session_state.atomic_defake.get_status() == "completed":
-    #     st.session_state.stage = "output"
-
-    #     st.session_state.adf_response = st.session_state.atomic_defake.get_output()
+        st.session_state.stage = "contributor"
+        st.session_state.post = user_post
+        st.switch_page("contributor.py")
 
 
 def set_output_stage():
-
     st.divider()
+    assigned_adf_label, user_response = st.session_state.atomic_defake.get_output()
 
-    ret, user_response = st.session_state.atomic_defake.get_output()
+    if assigned_adf_label == 1:
+        st.text("Here is your certified output:\n")
 
-    if ret == 1:
-        st.text("Here is your certified output")
-        st.text(user_response)
+    elif assigned_adf_label == 0:
+        st.text("Your post has not been verified because of the following reasons:\n")
 
-    elif ret == 0:
-        st.text("Your post has not been verified because of the following reasons.\n")
-
-        ### TO IMPROVE
-        feedback_report = ""
-
-        for key, user in user_response.items():
-            for idx in range(0,5):
-                feedback_report += "Question {:d}: ".format(idx+1)
-                feedback_report += user['qa_pair'][idx]["question"]
-                feedback_report += "\nResponse: "
-                feedback_report += user['qa_pair'][idx]["response_human"]
-                feedback_report += "\n"
-
-            feedback_report += "Overal assessment: "
-            feedback_report += user['overall_label']
-            feedback_report += "\nConfidence: "
-            feedback_report += user['overall_certainty']
-            feedback_report += "\n"
-
-        st.text(feedback_report)
-
-    elif ret == -1:
-        st.text(user_response)
-    
-    # st.text(st.session_state.adf_response)
+    st.text(user_response)
 
 
-# initialise_session()
-# if not st.session_state.stage:
 preamble()
 
 if st.session_state.stage == "post":
-    # preamble()
     post_message()
 
 if st.session_state.stage == "atomic_defake":
-    # preamble()
     run_atomic_defake()
-    
+
 if st.session_state.stage == "output":
     set_output_stage()
-    
     st.session_state.stage = None
     st.session_state.atomic_defake.reset()

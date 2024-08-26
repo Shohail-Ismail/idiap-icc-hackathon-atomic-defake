@@ -14,40 +14,46 @@ def read_qa_file(file_path):
     return run_id, qa_pairs
 
 
-def verify_single_false_or_unsure(qa_pairs):
+def verify_single_false_or_unsure(qa_pairs_human, qa_pairs_llm):
     verified_by_adf = True
-    for qa_pair in qa_pairs:
-        response = qa_pair["response_human"]["response"]
-        if response == "?" or response == "n":
+    for qa_pair in qa_pairs_llm:
+        response = qa_pair["response_llm"]["response"]
+        if response == "None" or response == "Little":
             verified_by_adf = False
             break
-        response = qa_pair["response_llm"]["response"]
-        if response == "All" or response == "Most" or response == "Some":
+
+    for _, user_qa_pairs in qa_pairs_human.items():
+        if (
+            user_qa_pairs["overall_label"] == "I don't know"
+            or user_qa_pairs["overall_label"] == "Not trustworthy"
+            or user_qa_pairs["overall_certainty"] == "uncertain"
+            or user_qa_pairs["overall_certainty"] == "very uncertain"
+        ):
             verified_by_adf = False
             break
     return verified_by_adf
 
 
-def verify_majority_vote(qa_pairs):
-    num_false = 0
-    for qa_pair in qa_pairs:
-        response = qa_pair["response_human"]["response"]
-        if response == "n" or response == "?":
-            num_false += 1
-        response = qa_pair["response_llm"]["response"]
-        if response == "All" or response == "Most" or response == "Some":
-            num_false += 1
+# def verify_majority_vote(qa_pairs_human, qa_pairs_llm):
+#     num_false = 0
+#     for qa_pair in qa_pairs:
+#         response = qa_pair["response_human"]["response"]
+#         if response == "n" or response == "?":
+#             num_false += 1
+#         response = qa_pair["response_llm"]["response"]
+#         if response == "All" or response == "Most" or response == "Some":
+#             num_false += 1
 
-    # We have two responses per question, for a total of 2 * len(qa_pairs) responses. If more than
-    # half of those are false, then the post is considered false.
-    return num_false <= len(qa_pairs)
+#     # We have two responses per question, for a total of 2 * len(qa_pairs) responses. If more than
+#     # half of those are false, then the post is considered false.
+#     return num_false <= len(qa_pairs)
 
 
-def verify_post(qa_pairs, method="single_false_or_unsure"):
+def verify_post(qa_pairs_human, qa_pairs_llm, method="single_false_or_unsure"):
     if method == "single_false_or_unsure":
-        return verify_single_false_or_unsure(qa_pairs)
-    elif method == "majority_vote":
-        return verify_majority_vote(qa_pairs)
+        return verify_single_false_or_unsure(qa_pairs_human, qa_pairs_llm)
+    # elif method == "majority_vote":
+    #     return verify_majority_vote(qa_pairs_human, qa_pairs_llm)
     else:
         raise ValueError(
             f"Invalid verification method: '{method}', must be one of {VERTIFICATION_STRATEGIES}."
