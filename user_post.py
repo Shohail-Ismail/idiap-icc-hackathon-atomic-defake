@@ -21,7 +21,7 @@ def set_atomic_defake():
 
 
 def preamble():
-    st.title("Atomic-DeFake")
+    st.title("AtomicDeFake")
     social_media_buttons()
 
 
@@ -72,14 +72,14 @@ def social_media_buttons():
             social_media_on_click(idx, SOCIAL_MEDIA, SOCIAL_MEDIA_CHARS)
 
 
-def post_message():
+def post_message(message_form):
     st.divider()
 
     n_max_chars_social = st.session_state.social_media["max_chars"]
 
     with st.form(key="post_form"):
         st.text_area(
-            "Write your post here",
+            message_form,
             value="",
             height=None,
             max_chars=n_max_chars_social,
@@ -91,7 +91,7 @@ def post_message():
         )
 
         submit_button = st.form_submit_button(
-            label="Atomic-DeFake",
+            label="AtomicDeFake",
             on_click=set_atomic_defake,
         )
 
@@ -138,7 +138,8 @@ def set_output_stage():
 preamble()
 
 if st.session_state.stage == "post":
-    post_message()
+    st.session_state.n_checkers_iter = st.session_state.n_checkers
+    post_message("Write your post here")
 
 if st.session_state.stage == "atomic_defake":
     run_atomic_defake()
@@ -147,5 +148,9 @@ if st.session_state.stage == "output":
     set_output_stage()
 
     if st.session_state.stage == "edit":
-        post_message()
+        st.session_state.n_checkers_iter = st.session_state.n_checkers
+        post_message("Edit your post here and submit again for verification.")
+    else:
+        st.session_state.stage = None
+        st.session_state.atomic_defake.reset()
     

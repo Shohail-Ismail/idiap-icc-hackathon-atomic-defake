@@ -41,9 +41,12 @@ class AtomicDeFake:
             raise ValueError(
                 f"Invalid verification method: '{self.aggregation_method}', must be one of {VERTIFICATION_STRATEGIES}."
             )
-        api_key = os.environ["MISTRAL_API_KEY"]
-        self.model = "open-mistral-nemo"
-        self.client = Mistral(api_key=api_key)
+
+        ## TO MOVE SOMEWHERE ELSE
+        # api_key = os.environ["MISTRAL_API_KEY"]
+        # self.model = "open-mistral-nemo"
+        # self.client = Mistral(api_key=api_key)
+        self.client = None
         
         self.reset()
         self.llm_responses = None
@@ -154,12 +157,15 @@ class AtomicDeFake:
     def format_feedback(self):
         """ Re-arrange dictionary of question-answer pairs and prepare the feedback report.
         """
-        # Number of Question-Answer pairs
-        n_qa_pair = len(user["qa_pair"])
+        
+        
 
         feedback_dict = dict()
 
         for user_id, user in self.qa_pairs_h.items():
+            # Number of Question-Answer pairs
+            n_qa_pair = len(user["qa_pair"])
+
             for idx in range(0, n_qa_pair):
                 if idx not in feedback_dict:
                     feedback_dict[idx] = {
@@ -194,9 +200,11 @@ class AtomicDeFake:
             feedback_report += feedback_dict[idx]["question"]
             feedback_report += "\nResponse: "
             for h_res in feedback_dict[idx]["human_responses"]:
-                feedback_report += feedback_dict[idx]["response_human"] + "\n"
-            feedback_report += feedback_dict[idx]["ai_response"]
-            feedback_report += "\n"
+                feedback_report += h_res + "\n"
+
+            if self.llm_responses is not None:
+                feedback_report += feedback_dict[idx]["ai_response"]
+                feedback_report += "\n"
 
         return feedback_report
 

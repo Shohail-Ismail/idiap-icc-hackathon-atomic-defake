@@ -31,14 +31,22 @@ def initialise_session():
         aggregation_method="single_false_or_unsure"
     )
 
+    parser = GetParser()
+    args = parser.parse_args()
+
+    st.session_state.n_checkers = args.n_checkers-1
+    st.session_state.n_checkers_iter = args.n_checkers-1
+
 
 def reset_session():
     """ """
-    if "stage" not in st.session_state:
-        st.session_state.stage = None
-
     if "social_media" not in st.session_state:
         st.session_state.social_media = None
+
+    parser = GetParser()
+    args = parser.parse_args()
+
+    st.session_state.n_checkers = args.n_checkers-1
 
 
 if "logged_in" not in st.session_state:
@@ -64,21 +72,17 @@ def GetParser(desc=""):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    parser.add_argument("--n_checkers", type=int, default=1)
+    parser.add_argument("--n_checkers", type=int, default=2)
     
     return parser
 
 
 if __name__ == "__main__":
 
-    parser = GetParser()
-    args = parser.parse_args()
-
-    st.session_state.n_checkers = args.n_checkers
-
-
     if "stage" not in st.session_state:
         initialise_session()
+    elif st.session_state.stage is None:
+        reset_session()
 
     login_page = st.Page(login, title="Log in", icon=":material/login:")
     logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
@@ -98,7 +102,7 @@ if __name__ == "__main__":
             }
         )
         st.set_page_config(
-            page_title="Atomic-DeFake", page_icon=":identification_card:"
+            page_title="AtomicDeFake", page_icon=":identification_card:"
         )
 
     else:

@@ -65,27 +65,34 @@ def send_answers_to_adf():
     st.session_state["contributor_qas"] = my_qas    
     st.session_state.atomic_defake.set_human_responses(user_id, my_qas.copy())
 
-    st.session_state.n_checkers -= 1
-
-    if st.session_state.n_checkers == 0:
+    if st.session_state.n_checkers_iter == 0:
         st.session_state.stage = "adf_aggregation"
-
-        
+    else:
+        print("switch_page")
+        st.session_state.stage = "new_checker"
 
 
 def questions_form():
-    questions, _ = st.session_state.atomic_defake.generate_atomic_questions(
-        st.session_state.post
-    )
-    st.session_state.atomic_defake.generated_questions = questions.copy()
+    
+    # questions, _ = st.session_state.atomic_defake.generate_atomic_questions(
+    #     st.session_state.post
+    # )
+    # st.session_state.atomic_defake.generated_questions = questions.copy()
 
-    adf_questions = {
-        "qa_pair": [{"question": q, "response_human": None} for q in questions]
-    }
+    # adf_questions = {
+    #     "qa_pair": [{"question": q, "response_human": None} for q in questions]
+    # }
+
+    ## DEBUG DOES NOT WORK
+    adf_questions = st.session_state.atomic_defake.get_ai_questions_fake()
+    
+    questions = [adf_questions["qa_pair"][x]["question"] for x in range(0,len(adf_questions["qa_pair"]))]
+    st.session_state.atomic_defake.generated_questions = questions.copy()
+    ####
 
     st.divider()
 
-    with st.form(key="questions_form"):
+    with st.form(key="questions_form",clear_on_submit=True):
 
         for idx in range(len(adf_questions["qa_pair"])):
             st.subheader("Question {:d}".format(idx + 1))
@@ -127,6 +134,7 @@ def questions_form():
         submit_button = st.form_submit_button(
             label="Submit",
             on_click=send_answers_to_adf,
+
         )
 
 
@@ -134,9 +142,11 @@ def questions_form():
 
 user_id = str(uuid.uuid1())
 
-st.title("Atomic-DeFake")
+st.title("AtomicDeFake")
 st.header("Contributor {:s}".format(user_id))
 st.divider()
+
+print(st.session_state.stage)
 
 if st.session_state.stage == "contributor":
     st.text(
@@ -150,6 +160,14 @@ if st.session_state.stage == "contributor":
         st.text(st.session_state.post)
 
     questions_form()
+
+elif st.session_state.stage == "new_checker":
+    print(st.session_state.n_checkers_iter)
+    st.session_state.n_checkers_iter=st.session_state.n_checkers_iter-1
+    print(st.session_state.n_checkers_iter)
+
+    st.session_state.stage = "contributor"
+    st.rerun()
 
 elif st.session_state.stage == "adf_aggregation":
     time.sleep(3)
