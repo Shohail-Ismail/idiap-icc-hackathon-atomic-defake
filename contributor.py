@@ -56,9 +56,12 @@ def send_answers_to_adf():
 def questions_form():
     """
     """
+    questions, _ = st.session_state.atomic_defake.generate_atomic_questions(st.session_state.post)
+    adf_questions = {"qa_pair": [{"question": q, "response_human": None} for q in questions]}
     # adf_questions = st.session_state.atomic_defake.get_ai_questions()
-    adf_questions = st.session_state.atomic_defake.get_ai_questions_fake()
 
+
+    st.write(adf_questions) ##TESTING
     st.divider()
 
     with st.form(key="questions_form"):
@@ -126,7 +129,7 @@ if st.session_state.stage == "contributor":
 elif st.session_state.stage == "adf_aggregation":
     time.sleep(3)
     
-    st.session_state.atomic_defake.detect_mislead_info_fake()
+    st.session_state.atomic_defake.detect_mislead_info()
 
     if st.session_state.atomic_defake.get_status() == "completed":
      

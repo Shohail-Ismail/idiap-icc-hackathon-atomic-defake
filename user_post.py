@@ -99,7 +99,7 @@ def run_atomic_defake():
     )
 
     
-    st.session_state.atomic_defake.verify_ai_fake(user_post)
+    st.session_state.atomic_defake.verify_ai(user_post)
     # atomic_defake.verify(user_post)
 
     if st.session_state.atomic_defake.get_status() == "human_responses":

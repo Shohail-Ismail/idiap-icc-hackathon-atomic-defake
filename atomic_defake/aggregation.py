@@ -43,7 +43,7 @@ def verify_majority_vote(qa_pairs):
     return num_false <= len(qa_pairs)
 
 
-def verify_post(run_id, qa_pairs, method="single_false_or_unsure"):
+def verify_post(qa_pairs, method="single_false_or_unsure"):
     if method == "single_false_or_unsure":
         return verify_single_false_or_unsure(qa_pairs)
     elif method == "majority_vote":

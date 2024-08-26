@@ -82,7 +82,7 @@ def generate_llm_responses(post, questions, client):
             }
         )
         print()
-        time.sleep(1)
+        time.sleep(2)
     return qa_pairs
 
 

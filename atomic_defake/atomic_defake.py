@@ -26,10 +26,9 @@ class AtomicDeFake:
             raise ValueError(
                 f"Invalid verification method: '{self.aggregation_method}', must be one of {VERTIFICATION_STRATEGIES}."
             )
-        # api_key = os.environ["MISTRAL_API_KEY"]
-        
-        # self.model = "open-mistral-nemo"
-        # self.client = Mistral(api_key=api_key)
+        api_key = os.environ["MISTRAL_API_KEY"]
+        self.model = "open-mistral-nemo"
+        self.client = Mistral(api_key=api_key)
         self.reset()
 
     def reset(self):
@@ -71,7 +70,7 @@ class AtomicDeFake:
         return str(uuid.uuid4().hex)
 
     def generate_atomic_questions(self, post_text):
-        questions, prompt_data = question_generation(post_text, self.client)
+        questions = question_generation(post_text, self.client)
         return questions
 
     def generate_LLM_responses(self, post_text, questions):
@@ -107,8 +106,8 @@ class AtomicDeFake:
             }
             json.dump(data, f)
 
-    def aggregate_responses(self, run_id, qa_pairs):
-        return verify_post(run_id, qa_pairs, method=self.aggregation_method)
+    def aggregate_responses(self, qa_pairs):
+        return verify_post(qa_pairs, method=self.aggregation_method)
 
     def verify(self, post_text):
         self.set_status("wait")
@@ -147,68 +146,31 @@ class AtomicDeFake:
 
     #     self.set_status("completed")
 
-    def get_ai_questions_fake(self):
-        """
-        """
-        adf_questions = {
-            "qa_pair" : [
-            {
-                "question": "Is this OK? 1",
-            },
-            {
-                "question": "Is this OK? 2",
-            },
-            {
-                "question": "Is this OK? 3",
-            },
-            {
-                "question": "Is this OK? 4",
-            },
-            {
-                "question": "Is this OK? 5",
-            },
-            ]
-        }
+    def generate_atomic_questions(self, post_text):
+        questions = question_generation(post_text, self.client)
+        return questions
 
-        return adf_questions
 
-    def verify_ai_fake(self, post_text, threshold=0.5):
+    def verify_ai(self, post_text):
         self.set_status("wait")
         self.post_text = post_text
-
-        print("AI Fake")
-        print(self.post_text)
-
+        questions = self.generate_atomic_questions(post_text)
         time.sleep(2)
-
+        responses = self.generate_LLM_responses(post_text, questions)
+        run_id = self.generate_run_id()
+        self.store_run(run_id, post_text, responses, None)
         self.set_status("human_responses")
 
     def set_human_responses(self, uuid, user_qas):
-        """
-        """
         if uuid not in self.qa_pairs_h:
             self.qa_pairs_h[uuid] = user_qas
 
 
-    def detect_mislead_info_fake(self):
-        """
-        """
-        # final_label = self.aggregate_responses(run_id, responses)
-
-        ### Aggregate results from the human and the AI
+    def detect_mislead_info(self):
         self.set_status("aggregation")
-        
-        threshold=0.5
-
-        likelihood = random.random()
-        
-        print(threshold)
-        print(likelihood)
-        
-        if likelihood > threshold:
-            self.verified = True
-        else:
-            self.verified = False
+        run_id = self.generate_run_id()
+        final_label = self.aggregate_responses(self.qa_pairs_h)
+        self.verified = final_label
 
         time.sleep(3)
 
