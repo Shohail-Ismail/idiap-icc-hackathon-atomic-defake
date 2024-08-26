@@ -107,12 +107,19 @@ def set_output_stage():
 
     if assigned_adf_label == 1:
         st.text("Here is your certified output:\n")
+        st.text(user_response)
+
+        st.session_state.stage = None
+        st.session_state.atomic_defake.reset()
 
     elif assigned_adf_label == 0:
         st.text("Your post has not been verified because of the following reasons:\n")
+        st.text(user_response)
 
-    st.text(user_response)
+        st.session_state.stage = "edit"
 
+############################################################################################
+# APP FLOW
 
 preamble()
 
@@ -124,5 +131,7 @@ if st.session_state.stage == "atomic_defake":
 
 if st.session_state.stage == "output":
     set_output_stage()
-    st.session_state.stage = None
-    st.session_state.atomic_defake.reset()
+
+    if st.session_state.stage == "edit":
+        post_message()
+    

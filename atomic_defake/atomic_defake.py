@@ -169,8 +169,8 @@ class AtomicDeFake:
                 # feedback_report += qa_pair["response_llm"]["response"]
                 # feedback_report += "\n"
 
-
-        feedback_report = "Feedback report\n\n"
+        ### CAN WE SUMMARISE THE FEEDBACK PER QUESTION WITH THE LLM?
+        feedback_report = "\n\nFeedback report\n\n"
 
         for idx in range(0, n_qa_pair):
             feedback_report += "Question {:d}: ".format(idx + 1)
@@ -198,7 +198,7 @@ class AtomicDeFake:
                 user_response = self.post_text + " (✅ Verified by ADF)"
             else:
                 post_text_verified = 0
-                user_response = self.format_feedback()
+                user_response = "YOUR POST:\n" + self.post_text + self.format_feedback()
 
         return post_text_verified, user_response
 
