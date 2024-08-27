@@ -74,20 +74,20 @@ def send_answers_to_adf():
 
 def questions_form():
     
-    # questions, _ = st.session_state.atomic_defake.generate_atomic_questions(
-    #     st.session_state.post
-    # )
-    # st.session_state.atomic_defake.generated_questions = questions.copy()
+    questions, _ = st.session_state.atomic_defake.generate_atomic_questions(
+        st.session_state.post
+    )
+    st.session_state.atomic_defake.generated_questions = questions.copy()
 
-    # adf_questions = {
-    #     "qa_pair": [{"question": q, "response_human": None} for q in questions]
-    # }
+    adf_questions = {
+        "qa_pair": [{"question": q, "response_human": None} for q in questions]
+    }
 
     ## DEBUG DOES NOT WORK
-    adf_questions = st.session_state.atomic_defake.get_ai_questions_fake()
+    # adf_questions = st.session_state.atomic_defake.get_ai_questions_fake()
     
-    questions = [adf_questions["qa_pair"][x]["question"] for x in range(0,len(adf_questions["qa_pair"]))]
-    st.session_state.atomic_defake.generated_questions = questions.copy()
+    # questions = [adf_questions["qa_pair"][x]["question"] for x in range(0,len(adf_questions["qa_pair"]))]
+    # st.session_state.atomic_defake.generated_questions = questions.copy()
     ####
 
     st.divider()
