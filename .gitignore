@@ -163,3 +163,5 @@ cython_debug/
 
 *.json
 questions/
+plot.png
+plot_ratio.png
