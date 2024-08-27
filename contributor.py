@@ -62,7 +62,7 @@ def send_answers_to_adf():
     my_qas["overall_certainty"] = copy.copy(st.session_state.contributor_conf)
 
     ### Send the info to the backend
-    st.session_state["contributor_qas"] = my_qas    
+    st.session_state["contributor_qas"] = my_qas
     st.session_state.atomic_defake.set_human_responses(user_id, my_qas.copy())
 
     if st.session_state.n_checkers_iter == 0:
@@ -73,26 +73,30 @@ def send_answers_to_adf():
 
 
 def questions_form():
-    
-    questions, _ = st.session_state.atomic_defake.generate_atomic_questions(
-        st.session_state.post
-    )
-    st.session_state.atomic_defake.generated_questions = questions.copy()
+    if st.session_state.atomic_defake.generated_questions is None:
+
+        questions, _ = st.session_state.atomic_defake.generate_atomic_questions(
+            st.session_state.post
+        )
+        st.session_state.atomic_defake.generated_questions = questions.copy()
 
     adf_questions = {
-        "qa_pair": [{"question": q, "response_human": None} for q in questions]
+        "qa_pair": [
+            {"question": q, "response_human": None}
+            for q in st.session_state.atomic_defake.generated_questions
+        ]
     }
 
     ## DEBUG DOES NOT WORK
     # adf_questions = st.session_state.atomic_defake.get_ai_questions_fake()
-    
+
     # questions = [adf_questions["qa_pair"][x]["question"] for x in range(0,len(adf_questions["qa_pair"]))]
     # st.session_state.atomic_defake.generated_questions = questions.copy()
     ####
 
     st.divider()
 
-    with st.form(key="questions_form",clear_on_submit=True):
+    with st.form(key="questions_form", clear_on_submit=True):
 
         for idx in range(len(adf_questions["qa_pair"])):
             st.subheader("Question {:d}".format(idx + 1))
@@ -134,7 +138,6 @@ def questions_form():
         submit_button = st.form_submit_button(
             label="Submit",
             on_click=send_answers_to_adf,
-
         )
 
 
@@ -147,6 +150,9 @@ st.header("Contributor {:s}".format(user_id))
 st.divider()
 
 print(st.session_state.stage)
+print(st.session_state.post)
+print(st.session_state.atomic_defake.generated_questions)
+
 
 if st.session_state.stage == "contributor":
     st.text(
@@ -163,16 +169,20 @@ if st.session_state.stage == "contributor":
 
 elif st.session_state.stage == "new_checker":
     print(st.session_state.n_checkers_iter)
-    st.session_state.n_checkers_iter=st.session_state.n_checkers_iter-1
+    post_tmp = copy.copy(st.session_state.post)
+    st.session_state.n_checkers_iter = st.session_state.n_checkers_iter - 1
     print(st.session_state.n_checkers_iter)
 
     st.session_state.stage = "contributor"
+    st.session_state.post = post_tmp
+
     st.rerun()
+
 
 elif st.session_state.stage == "adf_aggregation":
     time.sleep(3)
-    st.session_state.atomic_defake.detect_mislead_info_fake()
-    # st.session_state.atomic_defake.detect_mislead_info()
+    # st.session_state.atomic_defake.detect_mislead_info_fake()
+    st.session_state.atomic_defake.detect_mislead_info()
 
     if st.session_state.atomic_defake.get_status() == "completed":
         st.session_state.stage = "output"

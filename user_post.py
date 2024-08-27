@@ -132,6 +132,7 @@ def set_output_stage():
 
         st.session_state.stage = "edit"
 
+
 ############################################################################################
 # APP FLOW
 
@@ -149,8 +150,8 @@ if st.session_state.stage == "output":
 
     if st.session_state.stage == "edit":
         st.session_state.n_checkers_iter = st.session_state.n_checkers
+        st.session_state.atomic_defake.reset()
         post_message("Edit your post here and submit again for verification.")
     else:
         st.session_state.stage = None
         st.session_state.atomic_defake.reset()
-    
