@@ -143,35 +143,27 @@ def questions_form():
 
 ############################################################################
 
-user_id = str(uuid.uuid1())
+user_id = str(uuid.uuid4().hex)[:5]
 
 st.title("AtomicDeFake")
 st.header("Contributor {:s}".format(user_id))
 st.divider()
 
-print(st.session_state.stage)
-print(st.session_state.post)
-print(st.session_state.atomic_defake.generated_questions)
-
-
 if st.session_state.stage == "contributor":
-    st.text(
+    st.write(
         """
-        Please answer to the list of questions below
-        to identify if any misleading information is present in the following post.
+        Please answer to the list of questions below to identify if any misleading information is present in the following post.
         """
     )
-
+    st.divider()
     if "post" in st.session_state:
-        st.text(st.session_state.post)
+        st.write(st.session_state.post)
 
     questions_form()
 
 elif st.session_state.stage == "new_checker":
-    print(st.session_state.n_checkers_iter)
     post_tmp = copy.copy(st.session_state.post)
     st.session_state.n_checkers_iter = st.session_state.n_checkers_iter - 1
-    print(st.session_state.n_checkers_iter)
 
     st.session_state.stage = "contributor"
     st.session_state.post = post_tmp
@@ -189,7 +181,7 @@ elif st.session_state.stage == "adf_aggregation":
         st.switch_page("user_post.py")
 
 else:
-    st.text(
+    st.write(
         """
         There is no post for you to review.
         You will be notified when the post of another user is ready to be reviewed.

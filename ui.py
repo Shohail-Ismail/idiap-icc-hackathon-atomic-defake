@@ -34,8 +34,8 @@ def initialise_session():
     parser = GetParser()
     args = parser.parse_args()
 
-    st.session_state.n_checkers = args.n_checkers-1
-    st.session_state.n_checkers_iter = args.n_checkers-1
+    st.session_state.n_checkers = args.n_checkers - 1
+    st.session_state.n_checkers_iter = args.n_checkers - 1
 
 
 def reset_session():
@@ -46,7 +46,7 @@ def reset_session():
     parser = GetParser()
     args = parser.parse_args()
 
-    st.session_state.n_checkers = args.n_checkers-1
+    st.session_state.n_checkers = args.n_checkers - 1
 
 
 if "logged_in" not in st.session_state:
@@ -54,6 +54,8 @@ if "logged_in" not in st.session_state:
 
 
 def login():
+    st.text("Please log in to continue.")
+
     if st.button("Log in"):
         st.session_state.logged_in = True
         st.rerun()
@@ -64,6 +66,7 @@ def logout():
         st.session_state.logged_in = False
         st.rerun()
 
+
 #############################################################################
 def GetParser(desc=""):
     """ """
@@ -73,7 +76,7 @@ def GetParser(desc=""):
     )
 
     parser.add_argument("--n_checkers", type=int, default=2)
-    
+
     return parser
 
 
@@ -101,9 +104,7 @@ if __name__ == "__main__":
                 "AtomicDeFake": [user_post_page, contributor_page],
             }
         )
-        st.set_page_config(
-            page_title="AtomicDeFake", page_icon=":identification_card:"
-        )
+        st.set_page_config(page_title="AtomicDeFake", page_icon=":identification_card:")
 
     else:
         pg = st.navigation([login_page])

@@ -39,8 +39,8 @@ def social_media_on_click(idx, SOCIAL_MEDIA, SOCIAL_MEDIA_CHARS):
 def social_media_buttons():
     """ """
 
-    st.divider()
     st.text("Where do you want to post?")
+    st.divider()
 
     # TODO - move to a file to read maybe? Make sure to read once before running the app
     SOCIAL_MEDIA = ["Facebook", "Twitter", "Linkedin", "Other"]
@@ -121,14 +121,14 @@ def set_output_stage():
 
     if assigned_adf_label == 1:
         st.text("Here is your certified output:\n")
-        st.text(user_response)
+        st.write(user_response)
 
         st.session_state.stage = None
         st.session_state.atomic_defake.reset()
 
     elif assigned_adf_label == 0:
         st.text("Your post has not been verified because of the following reasons:\n")
-        st.text(user_response)
+        st.write(user_response)
 
         st.session_state.stage = "edit"
 
