@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from mistralai import Mistral
 
 QUESTION_DIR = "questions"
+MODEL_NAME = "open-mistral-nemo"
+TEMPERATURE = 0.0
 
 # load API key from .env file
 load_dotenv()
@@ -16,7 +18,8 @@ load_dotenv()
 def question_generation(post_text, client):
     prompt = f"Generate questions to verify whether the following post is NOT misleading. Make sure the questions are in the third person: {post_text}. Return the questions in a short JSON object. Include at least 5 questions."
     chat_response = client.chat.complete(
-        model="open-mistral-nemo",
+        model=MODEL_NAME,
+        temperature=TEMPERATURE,
         messages=[
             {
                 "role": "user",

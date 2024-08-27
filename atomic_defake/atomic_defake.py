@@ -46,7 +46,6 @@ class AtomicDeFake:
         api_key = os.environ["MISTRAL_API_KEY"]
         self.model = "open-mistral-nemo"
         self.client = Mistral(api_key=api_key)
-        # self.client = None
 
         self.reset()
 
@@ -119,13 +118,28 @@ class AtomicDeFake:
         if uuid not in self.qa_pairs_h:
             self.qa_pairs_h[uuid] = user_qas
 
+    def try_detect_llm(self):
+        llm_responses = None
+        attempt = 0
+        while llm_responses is None:
+            try:
+                llm_responses = self.generate_LLM_responses(
+                    self.post_text, self.generated_questions
+                )
+            except Exception as e:
+                print(f"[Attempt {attempt}] Error generating LLM responses: {e}")
+                time.sleep(10)
+                attempt += 1
+                if attempt > 5:
+                    break
+
+        return llm_responses
+
     def detect_mislead_info(self):
         """Brief description here."""
         self.set_status("aggregation")
 
-        self.llm_responses = self.generate_LLM_responses(
-            self.post_text, self.generated_questions
-        )
+        self.llm_responses = self.try_detect_llm()
 
         final_label = self.aggregate_responses(self.qa_pairs_h, self.llm_responses)
 
@@ -164,7 +178,7 @@ class AtomicDeFake:
         if self.llm_responses is not None:
             # feedback_report += "=== LLM Responses ===\n"
             for idx, qa_pair in enumerate(self.llm_responses):
-                llm_answer = "Support amount: " + qa_pair["response_llm"]["response"]
+                llm_answer = qa_pair["response_llm"]["response"]
 
                 if idx not in feedback_dict:
                     feedback_dict[idx] = {
@@ -174,9 +188,7 @@ class AtomicDeFake:
                 else:
                     feedback_dict[idx]["ai_response"] = llm_answer
 
-        feedback_report = "\n\nFeedback report\n\n"
-        print("feedback dict")
-        print(feedback_dict)
+        feedback_report = "\n\n -- nFeedback report -- \n\n"
 
         for idx in range(0, n_qa_pair):
             feedback_report += "Question {:d}: ".format(idx + 1)
@@ -186,9 +198,7 @@ class AtomicDeFake:
                 feedback_report += f"  > {h_res}\n"
 
             if self.llm_responses is not None:
-                feedback_report += (
-                    f"AI response:\n  > {feedback_dict[idx]['ai_response']}\n"
-                )
+                feedback_report += f"AI response: {feedback_dict[idx]['ai_response']}\n"
 
         return feedback_report
 
@@ -203,27 +213,12 @@ class AtomicDeFake:
         else:
             if self.verified:
                 post_text_verified = 1
-                user_response = self.post_text + " (✅ Verified by ADF)"
+                user_response = self.post_text + "\n(✅ Verified by ADF)"
             else:
                 post_text_verified = 0
                 user_response = "YOUR POST:\n" + self.post_text + self.format_feedback()
 
         return post_text_verified, user_response
-
-    #########################################################################
-    # Fake part for development. This should be replicated with the real version
-    # def verify_fake(self, post_text, threshold=0.5):
-    #     self.set_status("wait")
-    #     self.post_text = post_text
-
-    #     likelihood = random.random()
-    #     if likelihood > threshold:
-    #         self.verified = True
-    #     else:
-    #         self.verified = False
-    #     time.sleep(2)
-
-    #     self.set_status("completed")
 
     def get_ai_questions_fake(self):
         """Brief description here."""

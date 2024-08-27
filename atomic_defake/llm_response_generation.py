@@ -1,14 +1,13 @@
-import argparse
 import json
-import os
 import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-from mistralai import Mistral
 
 load_dotenv()
 RESPONSE_DIR = Path("responses")
+MODEL_NAME = "open-mistral-nemo"
+TEMPERATURE = 0.0
 
 
 def read_question_file(file_path):
@@ -29,26 +28,28 @@ def ask_certainty():
     return certainty
 
 
-def generate_answer(question, client):
+def generate_answer(question, post, client):
     response_answer = client.chat.complete(
-        model="open-mistral-nemo",
+        model=MODEL_NAME,
+        temperature=TEMPERATURE,
         messages=[
             {
                 "role": "user",
-                "content": f"Please provide a detailed answer to the following question: {question}.",
+                "content": f"Given the following post and question, please provide a detailed answer to the question: \n Post: {post} \n Question: {question}",
             },
         ],
     )
     return response_answer.choices[0].message.content
 
 
-def evaluate_for_misinformation(answer, client):
+def evaluate_for_misinformation(post, question, client):
     evaluation_response = client.chat.complete(
-        model="open-mistral-nemo",
+        model=MODEL_NAME,
+        temperature=TEMPERATURE,
         messages=[
             {
                 "role": "user",
-                "content": f"Given the following answer, evaluate it for misinformation. Specifically, assess the answer itself for sanity and consistency, give a misinformation certainty, and give the reason for that misinformation certaintly level, and use only heading of 'misinformation' (with possible labels of 'None', 'Little', 'Some', 'Most' and 'All'), 'certainty, 'reason' for all the answers, using no other headings pr subheadings: {answer}. Return the evaluation in a JSON format.",
+                "content": f"Given the following post and a critical question about it, evaluate the post for any misinformation. Be critical of user-generated sources like Twitter. Also give a misinformation certainty, and give the reason for that misinformation certaintly level. Use only fields of 'misinformation' (with possible labels of 'No misinformation', 'Some misinformation', 'Mostly misinformation'), 'certainty, 'reason' for all the answers, using no other fields or headings. Post: {post}\n Question: {question}\n Return the evaluation in a JSON format.",
             },
         ],
         response_format={
@@ -67,11 +68,13 @@ def evaluate_for_misinformation(answer, client):
 def generate_llm_responses(post, questions, client):
     qa_pairs = []
     for q in questions:
-        answer_response = generate_answer(q, client)
-        evaluation_response = evaluate_for_misinformation(answer_response, client)
+        # answer_response = generate_answer(q, post, client)
+        # time.sleep(2)
+        evaluation_response = evaluate_for_misinformation(post, q, client)
         qa_pairs.append(
             {
                 "question": q,
+                # "answer": answer_response,
                 "response_llm": {
                     "response": evaluation_response["misinformation"],
                     "certainty": evaluation_response["certainty"],
@@ -81,32 +84,3 @@ def generate_llm_responses(post, questions, client):
         )
         time.sleep(2)
     return qa_pairs
-
-
-def store_qa_pairs(run_id, qa_pairs, data):
-    filename = Path(RESPONSE_DIR) / f"{run_id}.json"
-    data["qa_pairs"] = qa_pairs
-    with open(filename, "w") as f:
-        json.dump(data, f)
-
-
-def main():
-    api_key = os.environ["MISTRAL_API_KEY"]
-    client = Mistral(api_key=api_key)
-
-    parser = argparse.ArgumentParser(description="A basic argparse example.")
-    parser.add_argument(
-        "file",
-        type=str,
-        help="The path to a file containing the atomic questions",
-        default=None,
-    )
-    args = parser.parse_args()
-
-    run_id, post, questions, data = read_question_file(Path(args.file))
-    qa_pairs = generate_llm_responses(post, questions, client)
-    store_qa_pairs(run_id, qa_pairs, data)
-
-
-if __name__ == "__main__":
-    main()
