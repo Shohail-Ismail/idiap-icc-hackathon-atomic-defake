@@ -188,17 +188,17 @@ class AtomicDeFake:
                 else:
                     feedback_dict[idx]["ai_response"] = llm_answer
 
-        feedback_report = "\n\n -- nFeedback report -- \n\n"
+        feedback_report = "\n\n -- Feedback report -- \n\n"
 
         for idx in range(0, n_qa_pair):
             feedback_report += "Question {:d}: ".format(idx + 1)
             feedback_report += feedback_dict[idx]["question"]
-            feedback_report += "\nHuman Response:\n"
+            feedback_report += "\n\nHuman Response:\n"
             for h_res in feedback_dict[idx]["human_responses"]:
                 feedback_report += f"  > {h_res}\n"
 
             if self.llm_responses is not None:
-                feedback_report += f"AI response: {feedback_dict[idx]['ai_response']}\n"
+                feedback_report += f"AI response: {feedback_dict[idx]['ai_response']}\n\n"
 
         return feedback_report
 
@@ -216,7 +216,7 @@ class AtomicDeFake:
                 user_response = self.post_text + "\n(✅ Verified by ADF)"
             else:
                 post_text_verified = 0
-                user_response = "YOUR POST:\n" + self.post_text + self.format_feedback()
+                user_response = "YOUR POST:\n " + self.post_text + self.format_feedback()
 
         return post_text_verified, user_response
 
