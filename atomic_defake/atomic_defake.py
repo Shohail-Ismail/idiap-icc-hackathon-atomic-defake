@@ -193,12 +193,12 @@ class AtomicDeFake:
         for idx in range(0, n_qa_pair):
             feedback_report += "Question {:d}: ".format(idx + 1)
             feedback_report += feedback_dict[idx]["question"]
-            feedback_report += "\n\nHuman Response:\n"
+            feedback_report += "\n\nHuman Responses:\n"
             for h_res in feedback_dict[idx]["human_responses"]:
-                feedback_report += f"  > {h_res}\n"
+                feedback_report += f"  > {h_res}\n\n"
 
             if self.llm_responses is not None:
-                feedback_report += f"AI response: {feedback_dict[idx]['ai_response']}\n\n"
+                feedback_report += f"\n\nAI response: {feedback_dict[idx]['ai_response']}\n\n"
 
         return feedback_report
 
