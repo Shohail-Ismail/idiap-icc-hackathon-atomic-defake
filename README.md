@@ -18,6 +18,3 @@ Create a `.env` file in the project root and put in your Mistral API key as foll
 ```
 MISTRAL_API_KEY=<YOUR_KEY>
 ```
-
-## Question generation
-See the `question_generation.py` script.
