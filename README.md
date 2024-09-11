@@ -1,4 +1,4 @@
-# atomic-defake
+# Atomic DeFake
 
 ## Requirements
 * Anaconda
