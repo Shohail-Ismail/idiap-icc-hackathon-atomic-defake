@@ -17,7 +17,7 @@ pip install -r requirements.txt
 ```
 
 ## Setup
-Create a `.env` file in the project root and put in your Mistral API key as follows:
+Create `.env` file in the project root and put in your Mistral API key as follows:
 ```
 MISTRAL_API_KEY=<YOUR_KEY>
 ```
