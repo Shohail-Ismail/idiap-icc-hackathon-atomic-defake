@@ -1,29 +1,12 @@
-#!/usr/bin/env python
-#
-# Brief description here
-#
-##############################################################################
-# Authors:
-# - Alessio Xompero, alessio.xompero@gmail.com
-#
-#  Created Date: 2024/08/23
-# Modified Date: 2023/08/26
-#
-# Copyright (c) 2024 AtomicDeFake
-#
-##############################################################################
 import streamlit as st
-
 
 def set_atomic_defake():
     """API fo Atomic DeFake"""
     st.session_state.stage = "atomic_defake"
 
-
 def preamble():
     st.title("AtomicDeFake")
     social_media_buttons()
-
 
 def social_media_on_click(idx, SOCIAL_MEDIA, SOCIAL_MEDIA_CHARS):
     """ """
@@ -34,7 +17,6 @@ def social_media_on_click(idx, SOCIAL_MEDIA, SOCIAL_MEDIA_CHARS):
 
     st.session_state.social_media = social_media_item
     st.session_state.stage = "post"
-
 
 def social_media_buttons():
     """ """
@@ -71,7 +53,6 @@ def social_media_buttons():
         if st.button(SOCIAL_MEDIA[idx]):
             social_media_on_click(idx, SOCIAL_MEDIA, SOCIAL_MEDIA_CHARS)
 
-
 def post_message(message_form):
     st.divider()
 
@@ -95,7 +76,6 @@ def post_message(message_form):
             on_click=set_atomic_defake,
         )
 
-
 def run_atomic_defake():
     """ """
     user_post = st.session_state.post
@@ -114,7 +94,6 @@ def run_atomic_defake():
         st.session_state.post = user_post
         st.switch_page("contributor.py")
 
-
 def set_output_stage():
     st.divider()
     assigned_adf_label, user_response = st.session_state.atomic_defake.get_output()
@@ -132,8 +111,6 @@ def set_output_stage():
 
         st.session_state.stage = "edit"
 
-
-############################################################################################
 # APP FLOW
 
 preamble()
