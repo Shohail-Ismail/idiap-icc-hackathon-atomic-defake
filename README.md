@@ -1,5 +1,8 @@
 # Atomic DeFake
 
+# Description
+Prototype made by [Shohail Ismail](), [Michiel van der Meer](https://m0re4u.github.io/projects.html), and [Alessio Xompero](https://github.com/kerolex) for the 'Idiap Research Institute - Create Challenge 2024' hackathon to detect misinformation in text posts. Uses Streamlit UI and Mistral API pipeline to generate atomic assessment questions for fact-checking, combining AI and human answers to aggregate final trustworthiness verdicts. Also provides feedback for iterative content improvement, configurable as an automatable corrective feedback loop for pre-post content verification. Next steps involve training on [AVeriTeC](https://arxiv.org/abs/2305.13117) for enhanced accuracy and explainability.
+
 ## Requirements
 * Anaconda
 * Python 3.11
