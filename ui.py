@@ -1,24 +1,9 @@
-#!/usr/bin/env python
-#
-# Brief description here
-#
-##############################################################################
-# Authors:
-# - Alessio Xompero, alessio.xompero@gmail.com
-#
-#  Created Date: 2024/08/23
-# Modified Date: 2023/08/26
-#
-# Copyright (c) 2024 AtomicDeFake
-#
-##############################################################################
 import argparse
 import streamlit as st
 
 from atomic_defake.atomic_defake import AtomicDeFake
 
 UI_STAGES = ["atomic_defake", "post", "adf_aggregation", "contributor", "output"]
-
 
 def initialise_session():
     """ """
@@ -37,7 +22,6 @@ def initialise_session():
     st.session_state.n_checkers = args.n_checkers - 1
     st.session_state.n_checkers_iter = args.n_checkers - 1
 
-
 def reset_session():
     """ """
     if "social_media" not in st.session_state:
@@ -47,7 +31,6 @@ def reset_session():
     args = parser.parse_args()
 
     st.session_state.n_checkers = args.n_checkers - 1
-
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -67,7 +50,7 @@ def logout():
         st.rerun()
 
 
-#############################################################################
+# App Flow
 def GetParser(desc=""):
     """ """
     parser = argparse.ArgumentParser(
